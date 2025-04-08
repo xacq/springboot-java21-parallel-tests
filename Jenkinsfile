@@ -1,19 +1,16 @@
 pipeline {
     agent any
-    //tools {
-    //    jdk 'JDK21'       // Name of the JDK 21 installation in Jenkins
-    //    maven 'Maven_3_8' // Adjust to your Maven installation name in Jenkins
-    //}
+    tools {
+        // Las definiciones de JDK en Jenkins
+        jdk 'JDK21'
+    }
     stages {
-        stage('Build') {
-            steps {
-                bat 'mvn clean compile -DskipTests'
-            }
-        }
         stage('Test') {
             parallel {
                 stage('Test on Java 21') {
                     steps {
+                        // Aquí compilamos y testeamos con Java 21
+                        bat 'mvn clean compile'
                         bat 'mvn test'
                     }
                     post {
@@ -28,6 +25,8 @@ pipeline {
                         PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
                     }
                     steps {
+                        // Aquí compilamos y testeamos con Java 17
+                        bat 'mvn clean compile -Djava.version=17'
                         bat 'mvn test -Djava.version=17'
                     }
                     post {
@@ -40,6 +39,7 @@ pipeline {
         }
         stage('Package') {
             steps {
+                // Elige una rama para empaquetar (o vuelve a compilar con la versión que quieras)
                 bat 'mvn package -DskipTests'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }

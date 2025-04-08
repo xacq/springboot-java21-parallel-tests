@@ -5,7 +5,7 @@ pipeline {
         jdk 'JDK21'
     }
     stages {
-        stage('Test') {
+        stage('Compile - Test') {
             parallel {
                 stage('Test on Java 21') {
                     steps {
